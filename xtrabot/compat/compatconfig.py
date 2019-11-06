@@ -57,23 +57,34 @@ class SupportMods():
             except:
                 pass
             def decorator(func):
+                kwargs = {}
+                kwargs["pattern"] = args["pattern"] if "pattern" in args else None
+                kwargs["outgoing"] = args["outgoing"] if "outgoing" in args else False
+                kwargs["incoming"] = args["incoming"] if "incoming" in args else False
                 logger = ModLogger.log(func.__name__)
-                s ="""async def {}(event, func=func, logger=logger):
+                s ="""async def {}(event, func=func, logger=logger, kwargs=kwargs):
     from xtrabot import client, trustUser
+    from telethon.events import StopPropagation
     if event.from_id in trustUser and event.from_id != (await client.get_me()).id:
         event2 = await event.respond("Processing,")
         event.edit = event2.edit
     elif event.from_id == (await client.get_me()).id:
         pass
+    elif "incoming" in kwargs:
+        if kwargs["incoming"] == True:
+            pass
     else:
         return
     try:
         await func(event)
+    except StopPropagation:
+        pass
     except Exception as error:
         await event.reply("__Error occured on the current__ `{}`, __do__ `.log` __to show the latest log.__")
         logger.exception(error)""".format(func.__name__,"."+func.__name__)
                 exec(s, None, locals())
-                client.add_event_handler(locals()[func.__name__], events.NewMessage(pattern=args["pattern"],outgoing=True,incoming=True))
+                del kwargs["incoming"] 
+                client.add_event_handler(locals()[func.__name__], events.NewMessage(incoming=True,**kwargs))
                 return func
             return decorator
 
