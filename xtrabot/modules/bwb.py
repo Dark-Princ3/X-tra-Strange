@@ -97,4 +97,4 @@ async def hs(event):
 
 async def do_echo(event, data):
         user = await event.get_sender()
-        await event.respond(f"[{user.first_name}](tg://user?id={user.id}): `{data}`")
+        await event.respond(f"`{data}`")
