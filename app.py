@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return "<h1>Lol this is my X-tra-Userbot Server now GTFO!!</h1>"
+    return "<h1>Lmao this is my X-tra-Userbot Server now GTFO!!</h1>"
 
 @app.route("/xtrabot/")
 def test():
